@@ -1,0 +1,22 @@
+{
+  "description": "Private Tally TEE App for confidential vote tallying",
+  "license": "MIT",
+  "author": "",
+  "social": {},
+  "logo": "",
+  "app": {
+    "owner": "",
+    "name": "private-tally-tee",
+    "type": "DOCKER",
+    "multiaddr": "registry.hub.docker.com/privatetally/tee-app:latest",
+    "checksum": "",
+    "mrenclave": {
+      "framework": "SCONE",
+      "version": "v5",
+      "entrypoint": "/app/build/tee-app",
+      "heapSize": 1073741824,
+      "fingerprint": ""
+    }
+  }
+}
+

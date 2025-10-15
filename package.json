@@ -1,0 +1,9 @@
+{
+  "name": "confidential-vote",
+  "private": true,
+  "workspaces": ["contracts", "client", "packages/*"],
+  "scripts": {
+    "build": "echo use per-package build",
+    "test": "echo use per-package test"
+  }
+}
