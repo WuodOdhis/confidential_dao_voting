@@ -12,8 +12,21 @@ contract MockAttestor is ITEEAttestor {
   function verify(bytes calldata, bytes32, bytes32) external view returns (bool) { return result; }
 }
 
+contract MockZKVerifier {
+  function verifyTally(bytes calldata, bytes calldata) external pure returns (bool) {
+    return true; // Mock always accepts
+  }
+}
+
 contract PrivateGovernorImpl is PrivateGovernor {
-  constructor(ITEEAttestor a, bytes32 m1, bytes32 m2, address f) PrivateGovernor("PrivateGovernor", a, m1, m2, f) {}
+  constructor(
+    ITEEAttestor a, 
+    bytes32 m1, 
+    bytes32 m2, 
+    address f, 
+    address zkVerifier,
+    bytes32 merkleRoot
+  ) PrivateGovernor("PrivateGovernor", a, m1, m2, f, zkVerifier, merkleRoot) {}
 
   function name() public pure override returns (string memory) { return "PrivateGovernor"; }
   function votingDelay() public pure override returns (uint256) { return 1; }
@@ -60,11 +73,22 @@ contract PrivateGovernorImpl is PrivateGovernor {
 
 contract PrivateGovernorTest is Test {
   MockAttestor att;
+  MockZKVerifier zkVerifier;
   PrivateGovernorImpl gov;
+  bytes32 merkleRoot;
 
   function setUp() public {
     att = new MockAttestor();
-    gov = new PrivateGovernorImpl(att, bytes32(uint256(1)), bytes32(uint256(2)), address(this));
+    zkVerifier = new MockZKVerifier();
+    merkleRoot = keccak256(abi.encodePacked(address(this))); // Simple merkle root for testing
+    gov = new PrivateGovernorImpl(
+      att, 
+      bytes32(uint256(1)), 
+      bytes32(uint256(2)), 
+      address(this),
+      address(zkVerifier),
+      merkleRoot
+    );
   }
 
   function testPublishAndSubmit() public {
@@ -73,9 +97,15 @@ contract PrivateGovernorTest is Test {
     bytes memory stored = gov.sessionPublicKey(1);
     assertEq(keccak256(stored), keccak256(pk));
 
+    // Generate nullifier for this vote
+    bytes32 nullifier = keccak256(abi.encodePacked("voter_secret", uint256(1)));
+    
+    // Create merkle proof (for testing, just empty array since we set simple root)
+    bytes32[] memory merkleProof = new bytes32[](0);
+
     vm.expectEmit(true, true, false, true);
-    emit IPrivateGovernor.EncryptedVoteSubmitted(1, address(this), hex"beef");
-    gov.submitEncryptedVote(1, hex"beef");
+    emit IPrivateGovernor.EncryptedVoteSubmitted(1, nullifier, hex"beef");
+    gov.submitEncryptedVote(1, hex"beef", nullifier, merkleProof);
   }
 
   function testFinalize() public {
