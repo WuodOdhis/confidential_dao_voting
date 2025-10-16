@@ -7,7 +7,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "echo 'Lint: No linter configured yet'",
-    "test": "echo 'Tests: Run npm install to add jest if needed'"
+    "test": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js",
+    "test:coverage": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js --coverage"
   },
   "dependencies": {
     "libsodium-wrappers": "^0.7.13"
