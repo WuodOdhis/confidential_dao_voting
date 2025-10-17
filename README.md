@@ -429,6 +429,6 @@ For questions or issues, please open a GitHub issue or reach out to the developm
 
 ---
 
-**⚠️ Security Disclosure**: If you discover a security vulnerability, please email security@example.com instead of opening a public issue.
+**⚠️ Security Disclosure**: If you discover a security vulnerability, please email antosellasie3970@gmail.com instead of opening a public issue.
 
 **Built with ❤️ for decentralized governance**
